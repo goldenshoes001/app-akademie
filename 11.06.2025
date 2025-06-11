@@ -7,35 +7,43 @@ void main(){
     {'temp' : null, "rain" : 3.8, "wind" : null}
   ];
   List<double?> temps = [];
-  int counter = 0;
+  List<double?> rain = [];
+  List<double?> wind = [];
 
-temps.add(weatherdata[0]["temp"]);
-temps.add(weatherdata[1]["temp"]);
-temps.add(weatherdata[2]["temp"]);
+  double avgTemp = 0;
+  double avgRain = 0;
+  double avgWind = 0;
 
 
+for(int i = 0; i<weatherdata.length; i++) {
+ 
+    if(weatherdata[i]["temp"]!=null)
+    {
+    temps.add(weatherdata[i]["temp"]!);
+    avgTemp += weatherdata[i]["temp"]!;  
+        
+    }
 
-double avgTemp = 0;
-if(temps[0]!=null)
-{
-  avgTemp += temps[0]!;
-  counter++;
+    if(weatherdata[i]["rain"]!=null)
+    {
+    rain.add(weatherdata[i]["rain"]!); 
+    avgRain += weatherdata[i]["rain"]!; 
+    
+    }
+
+    if(weatherdata[i]["wind"]!=null)
+    {
+    wind.add(weatherdata[i]["wind"]!);  
+    avgWind += weatherdata[i]["wind"]!;
+
+    }
 }
 
-if(temps[1]!=null)
-{
-  avgTemp += temps[1]!;
-  counter++;
-}
+   avgTemp /= temps.length;
+    avgRain /= rain.length;
+    avgWind /= wind.length;
 
-if(temps[2]!=null)
-{
-  avgTemp += temps[2]!;
-  counter++;
-}
-
-avgTemp /= counter;
-print(avgTemp);
+print("avgTemp: $avgTemp avgRain: $avgRain avgWind: $avgWind");
 
 
 
