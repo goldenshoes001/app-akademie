@@ -1,7 +1,7 @@
 void main()
 {
 
-  int age = 15;
+  int age = 10;
   bool hasParentalConsent = true;
   int movieAgeRating = 16;
   int ageDifferenceWithConsent = 2;
@@ -10,37 +10,25 @@ void main()
  
 
  //test 1
-  if(age>movieAgeRating) {
+  if(age>=movieAgeRating) {
     print("alt genug");
   }
-  else if(hasParentalConsent  && (age + ageDifferenceWithConsent)<=movieAgeRating) {
+  else if(hasParentalConsent  && age+2>=movieAgeRating) {
     print("alt genug");
   }
   else {
     print("srry du bist zu jung probiere es in $years Jahren nochmal");
   }
  
-if(age>movieAgeRating) {
-    print("alt genug");
-    }
-  else if(hasParentalConsent  && (age + ageDifferenceWithConsent)<=movieAgeRating) {
-    print("alt genug");
-  }
-
-  else {
-    print("srry du bist zu jung probiere es in $years Jahren nochmal");
-  }
-
-
   //Test 2
-  age = 13; 
-  hasParentalConsent = false; 
+  age = 19; 
+  hasParentalConsent = true; 
   movieAgeRating = 16;
 
  if(age>movieAgeRating) {
     print("alt genug");
   }
-  else if(hasParentalConsent  && (age + ageDifferenceWithConsent)<=movieAgeRating) {
+  else if(hasParentalConsent  && (age + ageDifferenceWithConsent) >=movieAgeRating) {
     print("alt genug");
   }
   else {
@@ -73,4 +61,6 @@ else {
   print("Wilkommen");
 }
 }
+
+
 

@@ -1,0 +1,43 @@
+void main(){
+
+  List<Map<String, double?>> weatherdata = [
+
+    {'temp' : 5.3, 'rain' : 0.9, 'wind': null},
+    {'temp' : 4.5, "rain" : null, "wind": 16.8},
+    {'temp' : null, "rain" : 3.8, "wind" : null}
+  ];
+  List<double?> temps = [];
+  int counter = 0;
+
+temps.add(weatherdata[0]["temp"]);
+temps.add(weatherdata[1]["temp"]);
+temps.add(weatherdata[2]["temp"]);
+
+
+
+double avgTemp = 0;
+if(temps[0]!=null)
+{
+  avgTemp += temps[0]!;
+  counter++;
+}
+
+if(temps[1]!=null)
+{
+  avgTemp += temps[1]!;
+  counter++;
+}
+
+if(temps[2]!=null)
+{
+  avgTemp += temps[2]!;
+  counter++;
+}
+
+avgTemp /= counter;
+print(avgTemp);
+
+
+
+}
+
