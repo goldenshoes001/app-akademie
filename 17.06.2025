@@ -1,0 +1,14 @@
+void main () {
+
+  for(int i = 1; i<101; i++)
+  {
+    if(i<=10)
+    print("kleine zahl $i");
+    else if(i>10 && i<=60) {
+      print("mittlere Zahl $i");
+    }
+    else {
+      print("große Zahl $i");
+    }
+  }
+}
