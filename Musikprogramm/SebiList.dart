@@ -60,8 +60,16 @@ class Sebilist<T> {
     }
   }
 
+  bool contains(dynamic element) {
+    if (this.sebiList.contains(element))
+      return true;
+    else {
+      return false;
+    }
+  }
+
   @override
   String toString() {
-    return sebiList.join("\n");
+    return sebiList.join(",");
   }
 }
