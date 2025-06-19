@@ -112,7 +112,7 @@ String? convertUserInputToLowercase(String? UserInput) {
 
 //Creates cromaticScale and returns it as a List without duplicates
 Sebilist<String> createChromaticScale() {
-  List<String> grundTone = ["c", "d", "e", "f", "g", "a", "h"];
+  List<String> grundTone = ["c", "d", "e", "f", "g", "a", "b"];
   Sebilist<String> cromaticScale = new Sebilist();
 
   for (int i = 0; i < grundTone.length; i++) {
@@ -266,7 +266,38 @@ Sebilist<dynamic> createUserInputForProgramms(String Programmname) {
   return UserInputs;
 }
 
-void findkey (Sebilist<String>chordList) {
+void getChordTonesFromUserInputList(Sebilist<String> chordList) {
+  Sebilist<String> allChords = new Sebilist();
+  for (int i = 0; i < chordList.length(); i++) {
+    Sebilist<String> currentChord = new Sebilist();
+    String actualMode = "major";
 
+    if (chordList[i].contains(actualMode) && chordList[i].length == 6) {
+      String completeChord = chordList[i].toString();
+      String tempChord = completeChord[0];
+      currentChord = createChord(tempChord, actualMode);
+    } else if (chordList[i].contains(actualMode) && chordList[i].length == 7) {
+      String completeChord = chordList[i].toString();
+      String tempChord = completeChord[0] + completeChord[1];
+      currentChord = createChord(tempChord, actualMode);
+    } else {}
+    if (!chordList[i].contains(actualMode)) {
+      actualMode = "minor";
 
+      if (chordList[i].length == 6) {
+        String completeChord = chordList[i].toString();
+        String tempChord = completeChord[0];
+        currentChord = createChord(tempChord, actualMode);
+      } else if (chordList[i].length == 7) {
+        String completeChord = chordList[i].toString();
+        String tempChord = completeChord[0] + completeChord[1];
+        currentChord = createChord(tempChord, actualMode);
+      }
+    }
+
+    for (int i = 0; i < currentChord.length(); i++) {
+      allChords.add(currentChord[i]);
+    }
+  }
+  print(allChords);
 }
