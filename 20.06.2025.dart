@@ -24,7 +24,7 @@ int laengeDesTextes(String text) {
 
 int anzahlVokale(String text) {
   int anzahl = 0;
-
+  text.toLowerCase();
   for (int i = 0; i < text.length; i++) {
     if (text[i] == "a" ||
         text[i] == "e" ||
