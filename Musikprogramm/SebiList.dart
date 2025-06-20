@@ -1,6 +1,7 @@
 class Sebilist<T> {
   List<T> sebiList = [];
 
+  
   void operator []=(int index, T value) {
     sebiList[index] = value;
   }

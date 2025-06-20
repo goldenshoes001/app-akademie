@@ -12,13 +12,20 @@ List<Function> functions = [
 //import 'dart:io';
 
 void main() {
-  chooseProgramm();
+  Sebilist<String> chords = new Sebilist();
+  chords.add("dmajor"); //ceg c2 e1 g2 f1 a1 h1 d1
+  chords.add("gmajor");
+  chords.add("cmajor");
+  chords.add("fmajor");
+
+  print(findkey(chords));
 }
 
 void chooseProgramm() {
   int? chosenIndex; // Use a nullable int to manage the state
-
+  bool check;
   do {
+    check = false;
     print("\n--- Music Program ---");
     print("Welcome! Please choose one of the programs:");
     print("0 --> Create Chord");
@@ -29,6 +36,7 @@ void chooseProgramm() {
 
     String? userInput = stdin.readLineSync(); // Read user input
     chosenIndex = null; // Reset the index before each iteration
+    ;
 
     if (userInput != null && checkUserInputIsNumber(userInput)) {
       int parsedInput = int.parse(userInput);
@@ -37,9 +45,18 @@ void chooseProgramm() {
       if (parsedInput >= 0 && parsedInput < programmnames.length) {
         chosenIndex = parsedInput; // A valid index was chosen
         // Start the program using the name of the chosen program
-        startProgramm(
-          programmnames[chosenIndex],
-        ); // chosenIndex is now guaranteed not to be null
+        startProgramm(programmnames[chosenIndex]);
+        print(
+          "\n"
+          "wanna start a other Program? than press y",
+        );
+        String startOtherProgramm = stdin.readLineSync() ?? "";
+        startOtherProgramm = startOtherProgramm.toLowerCase();
+
+        if (startOtherProgramm == "y") {
+          check = true;
+        }
+        // chosenIndex is now guaranteed not to be null
       } else {
         print("Invalid input or program terminated.");
       }
@@ -47,8 +64,9 @@ void chooseProgramm() {
       // If the input is null, empty, or not a number
       print("Invalid input or program terminated.");
     }
-  } while (chosenIndex !=
-      null); // The loop continues as long as a valid program was chosen
+  } while (chosenIndex != null &&
+      check ==
+          true); // The loop continues as long as a valid program was chosen
   // and is not terminated by invalid
 }
 //UserInputControllFunctions
@@ -156,8 +174,15 @@ Sebilist<String> createChord(String tone, String Mod) {
     print("wrong Input try again");
     startProgramm(programmnames[0]);
   }
-  print(Chord);
-
+  /*
+  print(
+    "\n"
+    "\n"
+    "\n"
+    "\n"
+    "the Tones from a $tone  $Mod chord are: $Chord",
+  );
+*/
   return Chord;
 }
 
@@ -175,10 +200,16 @@ void calculateIntervalFromTwoTones(String toneOne, String toneTwo) {
     print("wrong Input pls again");
     startProgramm(programmnames[2]);
   }
-  print(result);
+  print(
+    "\n"
+    "\n"
+    "\n"
+    "\n"
+    "the count of halfsteps between $toneOne and $toneTwo is: $result",
+  );
 }
 
-void createScale(String tone, String mod) {
+Sebilist<String> createScale(String tone, String mod) {
   Sebilist<String> Scale = new Sebilist();
   Sebilist<String> cromaticScale = createChromaticScale();
   List<int> majorSteps = [2, 4, 5, 7, 9, 11];
@@ -201,39 +232,68 @@ void createScale(String tone, String mod) {
     print("wrong input programm will be restarted");
     startProgramm(programmnames[1]);
   }
-  print(Scale);
+  //print(
+  //"\n"
+  //"\n"
+  //"\n"
+  //"\n"
+  //"$tone $mod scale: $Scale",
+  //);
+
+  return Scale;
 }
 
 void startProgramm(String Programmname) {
-  Sebilist<dynamic> UserInputs = createUserInputForProgramms(Programmname);
+  Sebilist<String> UserInputs = createUserInputForProgramms(Programmname);
+
   int index = programmnames.indexOf(Programmname);
-  if (Programmname == programmnames[0] ||
-      Programmname == programmnames[1] ||
-      Programmname == programmnames[2]) {
-    if (checkUserInputDatatype(UserInputs[0]) == "string" &&
-        checkUserInputDatatype(UserInputs[1]) == "string") {
-      functions[index](UserInputs[0], UserInputs[1]);
+
+  if (UserInputs.length() < 2) {
+    print("Invalid input for program '$Programmname'. Please try again.");
+    startProgramm(programmnames[index]);
+  }
+  if (UserInputs.length() >= 2) {
+    String inputOne = UserInputs[0];
+    String inputTwo = UserInputs[1];
+
+    bool isvalid = false;
+    if (Programmname == programmnames[0] || Programmname == programmnames[1]) {
+      if (isValidTone(UserInputs[0]) && isValidMode(UserInputs[1])) {
+        isvalid = true;
+      }
+    } else if (Programmname == programmnames[2]) {
+      if (isValidTone(UserInputs[0]) && isValidTone(UserInputs[1])) {
+        isvalid = true;
+      }
+    }
+
+    if (isvalid) {
+      functions[index](inputOne, inputTwo);
     } else {
-      print("wrong Userinput pls again");
+      print("Invalid input for program '$Programmname'. Please try again.");
       startProgramm(programmnames[index]);
     }
   }
 }
 
-String? CreateUserInput() {
-  String? Input = stdin.readLineSync();
+String? getUserInput() {
+  String Input = stdin.readLineSync() ?? "";
+  Sebilist<String> currentValue = new Sebilist();
 
-  if (Input != null && !Input.isEmpty)
+  Input = Input.trim();
+  currentValue.add(Input);
+
+  if (!Input.isEmpty)
     return Input.toLowerCase();
   else {
     print("wrong Input pls put in again");
-    return CreateUserInput();
+    return getUserInput();
   }
 }
 
-Sebilist<dynamic> createUserInputForProgramms(String Programmname) {
+Sebilist<String> createUserInputForProgramms(String Programmname) {
   Sebilist<String> cromaticScale = createChromaticScale();
-  Sebilist<dynamic> UserInputs = new Sebilist();
+  Sebilist<String> UserInputs = new Sebilist();
 
   if (Programmname == programmnames[0] || Programmname == programmnames[1]) {
     print(
@@ -241,9 +301,9 @@ Sebilist<dynamic> createUserInputForProgramms(String Programmname) {
       " ${cromaticScale})",
     );
 
-    dynamic chord = CreateUserInput();
-    print("pls write your mode that you wish. (major/minor) \n");
-    dynamic mode = CreateUserInput();
+    String chord = getUserInput()!;
+    print("pls write your mode that you wish. (major/minor)");
+    String mode = getUserInput()!;
 
     UserInputs.add(chord);
     UserInputs.add(mode);
@@ -253,12 +313,12 @@ Sebilist<dynamic> createUserInputForProgramms(String Programmname) {
       "${cromaticScale})",
     );
 
-    dynamic firstTone = CreateUserInput();
+    String firstTone = getUserInput()!;
     print(
       "pls write your 2nd tone that you \n"
       "${cromaticScale})",
     );
-    dynamic secondTone = CreateUserInput();
+    String secondTone = getUserInput()!;
 
     UserInputs.add(firstTone);
     UserInputs.add(secondTone);
@@ -266,38 +326,140 @@ Sebilist<dynamic> createUserInputForProgramms(String Programmname) {
   return UserInputs;
 }
 
-void getChordTonesFromUserInputList(Sebilist<String> chordList) {
-  Sebilist<String> allChords = new Sebilist();
-  for (int i = 0; i < chordList.length(); i++) {
-    Sebilist<String> currentChord = new Sebilist();
-    String actualMode = "major";
+bool checkUserInputAfterMinorAndMajor(Sebilist<String> liste) {
+  bool checker = true;
+  for (int i = 0; i < liste.length(); i++) {
+    if (liste[i] != "major" && liste[i] != "minor") {
+      checker = false;
+    }
+  }
+  return checker;
+}
 
-    if (chordList[i].contains(actualMode) && chordList[i].length == 6) {
-      String completeChord = chordList[i].toString();
-      String tempChord = completeChord[0];
-      currentChord = createChord(tempChord, actualMode);
-    } else if (chordList[i].contains(actualMode) && chordList[i].length == 7) {
-      String completeChord = chordList[i].toString();
-      String tempChord = completeChord[0] + completeChord[1];
-      currentChord = createChord(tempChord, actualMode);
-    } else {}
-    if (!chordList[i].contains(actualMode)) {
-      actualMode = "minor";
+bool checkerUserInputAfterCromanticScale(Sebilist<String> liste) {
+  Sebilist<String> cromaticScale = createChromaticScale();
 
-      if (chordList[i].length == 6) {
-        String completeChord = chordList[i].toString();
-        String tempChord = completeChord[0];
-        currentChord = createChord(tempChord, actualMode);
-      } else if (chordList[i].length == 7) {
-        String completeChord = chordList[i].toString();
-        String tempChord = completeChord[0] + completeChord[1];
-        currentChord = createChord(tempChord, actualMode);
+  bool checker = true;
+  for (int i = 0; i < liste.length(); i++) {
+    if (!cromaticScale.contains(liste[i])) {
+      checker = false;
+    }
+
+    print(checker);
+  }
+  return checker;
+}
+
+bool checkUserInputAfterChordInput(Sebilist<String> liste) {
+  Sebilist<String> cromanticScale = createChromaticScale();
+  Sebilist<String> chordlist = new Sebilist();
+
+  bool checker = true;
+  for (int i = 0; i < cromanticScale.length(); i++) {
+    chordlist.add(cromanticScale[i] + "major");
+    chordlist.add(cromanticScale[i] + "minor");
+  }
+
+  for (int i = 0; i < liste.length(); i++) {
+    if (!chordlist.contains(liste[i])) {
+      checker = false;
+    }
+  }
+
+  return checker;
+}
+
+bool isValidTone(String tone) {
+  return createChromaticScale().contains(tone.toLowerCase());
+}
+
+bool isValidMode(String mode) {
+  mode = mode.toLowerCase();
+  return mode == "major" || mode == "minor";
+}
+
+String findkey(Sebilist<String> chordlist) {
+  String key = "";
+
+  Sebilist<String> allChordTones = getChordTonesFromUserInputList(chordlist);
+  List<String> sortedChordList = getSortedListFromChords(chordlist);
+  List<int> listOfCounter = [];
+
+  for (int i = 0; i < chordlist.length(); i++) {
+    Sebilist<String> currentScale = createScale(
+      sortedChordList[i * 2],
+      sortedChordList[i * 2 + 1],
+    );
+
+    int counter = 0;
+    for (int i = 0; i < allChordTones.length(); i++) {
+      if (currentScale.contains(allChordTones[i])) {
+        counter++;
       }
     }
 
-    for (int i = 0; i < currentChord.length(); i++) {
-      allChords.add(currentChord[i]);
+    listOfCounter.add(counter);
+  }
+
+  key = chordlist[listOfCounter.indexOf(getMaxValue(listOfCounter))];
+  return key;
+}
+
+int getMaxValue(List<int> resultList) {
+  return resultList.reduce((currentMax, element) => max(currentMax, element));
+}
+
+List<String> getSortedListFromChords(Sebilist<String> chordlist) {
+  List<String> cutedChords = [];
+
+  for (int i = 0; i < chordlist.length(); i++) {
+    String subStringChord = cutChordFromChordTotal(chordlist[i], "m");
+    String subStringMod = cutModFromChordTotal(chordlist[i], "m");
+    cutedChords.add(subStringChord);
+    cutedChords.add(subStringMod);
+  }
+
+  return cutedChords;
+}
+
+String cutChordFromChordTotal(String element, String char) {
+  int index = element.indexOf(char);
+  String subStringOne = "";
+
+  for (int i = 0; i < element.length; i++) {
+    if (i < index) {
+      subStringOne += element[i];
     }
   }
-  print(allChords);
+
+  return subStringOne;
+}
+
+String cutModFromChordTotal(String element, String char) {
+  int index = element.indexOf(char);
+  String subString = "";
+
+  for (int i = 0; i < element.length; i++) {
+    if (i >= index) {
+      subString += element[i];
+    }
+  }
+
+  return subString;
+}
+
+Sebilist<String> getChordTonesFromUserInputList(Sebilist<String> list) {
+  Sebilist<String> chordTonesTotal = new Sebilist();
+  List<String> chordTonesListed = getSortedListFromChords(list);
+
+  for (int i = 0; i < list.length(); i++) {
+    Sebilist<String> currentChord = createChord(
+      chordTonesListed[i * 2],
+      chordTonesListed[(i * 2 + 1)],
+    );
+    for (int j = 0; j < currentChord.length(); j++) {
+      chordTonesTotal.add(currentChord[j]);
+    }
+  }
+  return chordTonesTotal;
 }
