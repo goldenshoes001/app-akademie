@@ -8,7 +8,7 @@ void main() {
   print("laenge von Sebastian: ${laengeDesTextes("Sebastian")}");
 
   print("anzahl vokale von aeiou ${anzahlVokale("aeiou")}");
-  print("anzahl vokale von ${anzahlVokale("hallo")}");
+  print("anzahl vokale von hallo ${anzahlVokale("hallo")}");
   print(
     "anzahl vokale von ich bin ein text ${anzahlVokale("ich bin ein text")}",
   );
