@@ -2,23 +2,18 @@ import 'SebiList.dart';
 import "dart:math";
 import 'dart:io';
 
-List<String> programmnames = ["chord", "scale", "intervall"];
+List<String> programmnames = ["chord", "scale", "intervall", "findkey"];
 List<Function> functions = [
   createChord,
   createScale,
   calculateIntervalFromTwoTones,
+  findkey,
 ];
 
 //import 'dart:io';
 
 void main() {
-  Sebilist<String> chords = new Sebilist();
-  chords.add("dmajor"); //ceg c2 e1 g2 f1 a1 h1 d1
-  chords.add("gmajor");
-  chords.add("cmajor");
-  chords.add("fmajor");
-
-  print(findkey(chords));
+  chooseProgramm();
 }
 
 void chooseProgramm() {
@@ -31,6 +26,7 @@ void chooseProgramm() {
     print("0 --> Create Chord");
     print("1 --> Create Scale");
     print("2 --> Calculate Interval");
+    print("3 --> find key");
     print("Type anything other than 0, 1, or 2 to exit the program.");
     print("---------------------\n");
 
@@ -232,13 +228,6 @@ Sebilist<String> createScale(String tone, String mod) {
     print("wrong input programm will be restarted");
     startProgramm(programmnames[1]);
   }
-  //print(
-  //"\n"
-  //"\n"
-  //"\n"
-  //"\n"
-  //"$tone $mod scale: $Scale",
-  //);
 
   return Scale;
 }
@@ -248,11 +237,11 @@ void startProgramm(String Programmname) {
 
   int index = programmnames.indexOf(Programmname);
 
-  if (UserInputs.length() < 2) {
+  if (UserInputs.length() < 2 && index != 3) {
     print("Invalid input for program '$Programmname'. Please try again.");
     startProgramm(programmnames[index]);
   }
-  if (UserInputs.length() >= 2) {
+  if (UserInputs.length() >= 2 && index != 3) {
     String inputOne = UserInputs[0];
     String inputTwo = UserInputs[1];
 
@@ -269,6 +258,24 @@ void startProgramm(String Programmname) {
 
     if (isvalid) {
       functions[index](inputOne, inputTwo);
+    } else {
+      print("Invalid input for program '$Programmname'. Please try again.");
+      startProgramm(programmnames[index]);
+    }
+  }
+  if (Programmname == programmnames[3]) {
+    bool check = true;
+    for (int i = 0; i < UserInputs.length(); i++) {
+      if (!isValidTone(
+        UserInputs[i].replaceAll("major", "").replaceAll("minor", ""),
+      )) {
+        check = false;
+      }
+    }
+
+    if (check && checkUserInputAfterChordInput(UserInputs)) {
+      String detectedKey = findkey(UserInputs);
+      print("\nThe most likely key is: $detectedKey");
     } else {
       print("Invalid input for program '$Programmname'. Please try again.");
       startProgramm(programmnames[index]);
@@ -322,7 +329,24 @@ Sebilist<String> createUserInputForProgramms(String Programmname) {
 
     UserInputs.add(firstTone);
     UserInputs.add(secondTone);
+  } else if (Programmname == programmnames[3]) {
+    print(
+      "pls write your Chords you want in a row and seperate them with a , \n" +
+          "possible chords are: ${cromaticScale} major/minor",
+    );
+
+    String? rawInput = stdin.readLineSync();
+    if (rawInput != null && rawInput.isNotEmpty) {
+      List<String> chords = rawInput
+          .split(',')
+          .map((s) => s.trim().toLowerCase())
+          .toList();
+      for (var chord in chords) {
+        UserInputs.add(chord); // Füge jeden Akkord einzeln hinzu
+      }
+    }
   }
+  print(UserInputs);
   return UserInputs;
 }
 
