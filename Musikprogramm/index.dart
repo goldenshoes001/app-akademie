@@ -269,8 +269,9 @@ void startProgramm(String Programmname) {
     bool check = true;
     for (int i = 0; i < UserInputs.length(); i++) {
       if (!isValidTone(
-        UserInputs[i].replaceAll("major", "").replaceAll("minor", ""),
-      )) {
+            UserInputs[i].replaceAll("major", "").replaceAll("minor", ""),
+          ) ||
+          UserInputs[i].isEmpty) {
         check = false;
         break;
       }
@@ -383,8 +384,8 @@ Sebilist<String> createUserInputForProgramms(String Programmname) {
           "Possible chords are: ${cromaticScale} major/minor",
     );
 
-    String? rawInput = stdin.readLineSync();
-    if (rawInput != null && rawInput.isNotEmpty) {
+    String? rawInput = getUserInput();
+    if (rawInput.isNotEmpty) {
       List<String> chords = rawInput
           .split(',')
           .map((s) => s.trim().toLowerCase())
