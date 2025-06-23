@@ -3,12 +3,12 @@ import "dart:math";
 import 'dart:io';
 
 List<String> programmnames = [
-  "chord",
-  "scale",
-  "intervall",
-  "findkey",
-  "transpose",
-  "findChords",
+  "create chord tones",
+  "create scales",
+  "calcutlate intervall from 2 tones",
+  "find the key the most chords are maching",
+  "transpose a list of notes transpose",
+  "find all chords that can be created from tones in a list",
 ];
 List<Function> functions = [
   createChord,
@@ -27,31 +27,22 @@ Sebilist<String> findChords(Sebilist<String> toneList) {
   Sebilist<String> foundChords = new Sebilist();
   Sebilist<String> chromaticScale = createChromaticScale();
 
-  // Keine Sortierung oder Duplikatsprüfung für toneList, da Sebilist das intern verwaltet
-
-  // Iteriere durch jeden möglichen Grundton der chromatischen Skala
   for (int i = 0; i < chromaticScale.length(); i++) {
     String rootTone = chromaticScale[i];
 
-    // Versuche, einen Dur-Akkord zu bilden und zu überprüfen
     Sebilist<String> majorChordTones = createChord(rootTone, "major");
-    // Überprüfe, ob alle Töne des Dur-Akkords in der Eingabeliste vorhanden sind
     if (majorChordTones.length() == 3 &&
         toneList.contains(majorChordTones[0]) &&
         toneList.contains(majorChordTones[1]) &&
         toneList.contains(majorChordTones[2])) {
-      // Füge den Akkordnamen hinzu. Sebilist sollte Duplikate hier selbst handhaben.
       foundChords.add("$rootTone" + "major");
     }
 
-    // Versuche, einen Moll-Akkord zu bilden und zu überprüfen
     Sebilist<String> minorChordTones = createChord(rootTone, "minor");
-    // Überprüfe, ob alle Töne des Moll-Akkords in der Eingabeliste vorhanden sind
     if (minorChordTones.length() == 3 &&
         toneList.contains(minorChordTones[0]) &&
         toneList.contains(minorChordTones[1]) &&
         toneList.contains(minorChordTones[2])) {
-      // Füge den Akkordnamen hinzu. Sebilist sollte Duplikate hier selbst handhaben.
       foundChords.add("$rootTone" + "minor");
     }
   }
@@ -84,47 +75,49 @@ void transpose(Sebilist<String> liste, int steps, String plusOrMinus) {
 }
 
 void chooseProgramm() {
-  int? chosenIndex;
-  bool check;
-  do {
-    check = false;
-    print("\n--- Music Program ---");
-    print("Welcome! Please choose one of the programs:");
-    print("0 --> Create Chord");
-    print("1 --> Create Scale");
-    print("2 --> Calculate Interval");
-    print("3 --> Find Key");
-    print("4 --> Transpose");
-    print("5 --> find chords");
-    print("Type anything other than 0, 1, 2, 3, 4, 5 to exit the program.");
-    print("---------------------\n");
+  bool continueProgram = true;
+  while (continueProgram) {
+    int? chosenIndex = getProgramChoice();
 
-    String? userInput = stdin.readLineSync();
-    chosenIndex = null;
-
-    if (userInput != null && checkUserInputIsNumber(userInput)) {
-      int parsedInput = int.parse(userInput);
-
-      if (parsedInput >= 0 && parsedInput < programmnames.length) {
-        chosenIndex = parsedInput;
-        startProgramm(programmnames[chosenIndex]);
-        print(
-          "\n"
-          "Want to start another program? Press 'y'",
-        );
-        String startOtherProgramm = stdin.readLineSync() ?? "";
-        startOtherProgramm = startOtherProgramm.toLowerCase();
-
-        if (startOtherProgramm == "y") {
-          check = true;
-        }
-      } else {
-        print("Invalid input or program terminated.");
-      }
+    if (isValidProgramChoice(chosenIndex)) {
+      startProgramm(programmnames[chosenIndex!]);
+      continueProgram = promptForAnotherRun();
     } else {
       print("Invalid input or program terminated.");
+      continueProgram = false; // Beende das Programm bei ungültiger Eingabe
     }
-  } while (chosenIndex != null && check == true);
+  }
+}
+
+int? getProgramChoice() {
+  printPotencialProgramms(); // Zeigt das Menü an
+  String? userInput = stdin.readLineSync();
+  if (userInput != null && checkUserInputIsNumber(userInput)) {
+    return int.parse(userInput);
+  }
+  return null; // Gibt null zurück, wenn die Eingabe ungültig ist
+}
+
+bool isValidProgramChoice(int? choice) {
+  return choice != null && choice >= 0 && choice < programmnames.length;
+}
+
+bool promptForAnotherRun() {
+  print("\nWant to start another program? Press 'y'");
+  String startOtherProgramm = stdin.readLineSync() ?? "";
+  return startOtherProgramm.toLowerCase() == "y";
+}
+
+void printPotencialProgramms() {
+  print("\n--- Music Program ---");
+  print("Welcome! Please choose one of the programs:");
+
+  for (int i = 0; i < programmnames.length; i++) {
+    print("$i --> ${programmnames[i]}");
+  }
+
+  print("Type anything else to exit the program.");
+  print("---------------------\n");
 }
 
 bool checkUserInputIsNumber(String? UserInput) {
@@ -173,8 +166,9 @@ Sebilist<String> createChord(String tone, String Mod) {
       Chord.add(cromaticScale[(index + lastTone) % 12]);
     }
   } else {
-    print("Wrong input, please try again.");
-    startProgramm(programmnames[0]);
+    // Wenn die Eingabe für createChord ungültig ist, wird hier keine Rekursion mehr aufgerufen,
+    // sondern eine leere Liste zurückgegeben. Die aufrufende Funktion muss dies behandeln.
+    return Chord;
   }
 
   return Chord;
@@ -301,6 +295,7 @@ void startProgramm(String Programmname) {
         }
       } else {
         print("Invalid input for program '$Programmname'. Please try again.");
+        UserInputs = new Sebilist();
         startProgramm(programmnames[index]);
       }
     }
@@ -375,9 +370,7 @@ void startProgramm(String Programmname) {
   } else if (Programmname == programmnames[5]) {
     if (UserInputs.length() < 3) {
       print("To find chords, please enter at least 3 tones.");
-      startProgramm(
-        programmnames[index],
-      ); // Startet das Programm neu, wenn zu wenige Töne
+      startProgramm(programmnames[index]);
     } else {
       Sebilist<String> foundChords = functions[index](UserInputs);
       if (foundChords.length() > 0) {
