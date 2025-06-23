@@ -23,6 +23,17 @@ void main() {
   chooseProgramm();
 }
 
+/*
+    erstellt die chromatische Tonleiter(c,c#,d,d#,e,f,f#,g,g#,a,b)
+    erstellt dann von jedem Ton den Dur und Mollakkord, speichert
+    die Töne der jeweiligen Akkorde dann in einer Liste (major/minor Chordtones)
+    und kontrolliert dann, ob diese Töne in der übergebenen Liste sind
+
+    --> ja speicher in foundChords
+    --> nein dann nicht
+
+    gibt dann alle gefundenen Akkorde zurück
+*/
 Sebilist<String> findChords(Sebilist<String> toneList) {
   Sebilist<String> foundChords = new Sebilist();
   Sebilist<String> chromaticScale = createChromaticScale();
@@ -74,21 +85,34 @@ void transpose(Sebilist<String> liste, int steps, String plusOrMinus) {
   print("------------------------\n");
 }
 
+/*
+startet das Programm das der Benutzer starten möchte
+choosenIndex ist der index des Programms
+isValidProgramCHoice checkt ob der gewählte Index ein
+gültiger Index ist
+in continueProgramm wird gespeichert ob der Nutzer noch einen 
+Durchlauf möchte
+*/
 void chooseProgramm() {
   bool continueProgram = true;
+
   while (continueProgram) {
     int? chosenIndex = getProgramChoice();
 
     if (isValidProgramChoice(chosenIndex)) {
       startProgramm(programmnames[chosenIndex!]);
+
       continueProgram = promptForAnotherRun();
     } else {
       print("Invalid input or program terminated.");
-      continueProgram = false; // Beende das Programm bei ungültiger Eingabe
+      continueProgram = false;
     }
   }
 }
 
+//Erstellt eine Nutzereingabe mit dem namen userInput
+//und gibt diesen wenn er nicht null und wenn er eine Zahl ist als
+//Integer zurüclk
 int? getProgramChoice() {
   printPotencialProgramms(); // Zeigt das Menü an
   String? userInput = stdin.readLineSync();
@@ -97,18 +121,30 @@ int? getProgramChoice() {
   }
   return null; // Gibt null zurück, wenn die Eingabe ungültig ist
 }
+/*
+Checkt ob die eingegebene Zahl:
+- in der Range der Programme ist
+- größer 0 ist
+- kleiner als programmnames.length
 
+---> wenn ja returnwert = true
+---> wenn nein returnwert = false
+*/
 bool isValidProgramChoice(int? choice) {
   return choice != null && choice >= 0 && choice < programmnames.length;
 }
 
+//gibt ein boolean zurück, der aussagt ob ein Nutzer noch einen Durchgang möchte
 bool promptForAnotherRun() {
   print("\nWant to start another program? Press 'y'");
+
   String startOtherProgramm = stdin.readLineSync() ?? "";
   return startOtherProgramm.toLowerCase() == "y";
 }
 
+//gibt alle potenziellen Programme aus
 void printPotencialProgramms() {
+  stdout.write("\x1b[Hm\x1b[2J");
   print("\n--- Music Program ---");
   print("Welcome! Please choose one of the programs:");
 
@@ -119,14 +155,15 @@ void printPotencialProgramms() {
   print("Type anything else to exit the program.");
   print("---------------------\n");
 }
-
+//prüft ob der Wert der eingegeben wurde eine Zahl ist
 bool checkUserInputIsNumber(String? UserInput) {
   if (num.tryParse(UserInput!) != null) {
     return true;
   }
   return false;
 }
-
+//erstellt chromatische Tonleiter
+// Rückgabewert ist die chromatische Liste 
 Sebilist<String> createChromaticScale() {
   List<String> grundTone = ["c", "d", "e", "f", "g", "a", "b"];
   Sebilist<String> cromaticScale = new Sebilist();
@@ -144,7 +181,7 @@ Sebilist<String> createChromaticScale() {
 
   return cromaticScale;
 }
-
+//erstellt dur/moll akkord jenach dem ob mod major oder minor ist
 Sebilist<String> createChord(String tone, String Mod) {
   Sebilist<String> Chord = new Sebilist();
   Sebilist<String> cromaticScale = createChromaticScale();
@@ -173,8 +210,8 @@ Sebilist<String> createChord(String tone, String Mod) {
 
   return Chord;
 }
-
-dynamic calculateIntervalFromTwoTones(String toneOne, String toneTwo) {
+//berechnet Halbtonschritte zwischen 2 tönen und gibt die anzahl der Schritte dann als return zurück
+int calculateIntervalFromTwoTones(String toneOne, String toneTwo) {
   Sebilist<String> cromaticScale = createChromaticScale();
   int result = 0;
   if (cromaticScale.contains(toneOne) && cromaticScale.contains(toneTwo)) {
@@ -189,7 +226,7 @@ dynamic calculateIntervalFromTwoTones(String toneOne, String toneTwo) {
 
   return result;
 }
-
+//erstellt Tonleiter von dem Ton (c,c#,d,d#,e,f,f#,g,g#,a,b) und dem Modus (Major,Minor) der übergeben wurde
 Sebilist<String> createScale(String tone, String mod) {
   Sebilist<String> Scale = new Sebilist();
   Sebilist<String> cromaticScale = createChromaticScale();
@@ -216,179 +253,9 @@ Sebilist<String> createScale(String tone, String mod) {
 
   return Scale;
 }
-
-void startProgramm(String Programmname) {
-  Sebilist<String> UserInputs = createUserInputForProgramms(Programmname);
-  int index = programmnames.indexOf(Programmname);
-
-  if (Programmname == programmnames[0] ||
-      Programmname == programmnames[1] ||
-      Programmname == programmnames[2]) {
-    if (UserInputs.length() < 2) {
-      print("Invalid input for program '$Programmname'. Please try again.");
-      startProgramm(programmnames[index]);
-    } else {
-      String inputOne = UserInputs[0];
-      String inputTwo = UserInputs[1];
-
-      bool isValid = false;
-      if ((Programmname == programmnames[0] ||
-              Programmname == programmnames[1]) &&
-          isValidTone(inputOne) &&
-          isValidMode(inputTwo)) {
-        isValid = true;
-      } else if (Programmname == programmnames[2] &&
-          isValidTone(inputOne) &&
-          isValidTone(inputTwo)) {
-        isValid = true;
-      }
-
-      if (isValid) {
-        (functions[index](inputOne, inputTwo));
-        if (index == 0) {
-          print(
-            "the tones from " +
-                inputOne +
-                inputTwo +
-                " are: " +
-                (functions[index](inputOne, inputTwo)).toString(),
-          );
-        } else if (index == 1) {
-          Sebilist<String> scale = new Sebilist();
-          scale = functions[index](inputOne, inputTwo);
-          print("the tones from the " + inputOne + inputTwo + " scale are: ");
-          for (int i = 0; i < scale.length(); i++) {
-            if (inputTwo == "major") {
-              if (i == 0 || i == 3 || i == 4 && i != 6) {
-                print(scale[i] + " --> represents " + scale[i] + "major chord");
-              }
-              if (i == 6) {
-                print(
-                  scale[i] + " --> represents " + scale[i] + "minor7b5 chord",
-                );
-              } else {
-                print(scale[i] + " --> represents " + scale[i] + "minor chord");
-              }
-            }
-            if (inputTwo == "minor") {
-              if (i == 0 || i == 3 || i == 4) {
-                print(scale[i] + " --> represents " + scale[i] + "minor chord");
-              } else if (i == 1) {
-                print(
-                  scale[i] + " --> represents " + scale[i] + "minor7b5 chord",
-                );
-              } else {
-                print(scale[i] + " --> represents " + scale[i] + "major chord");
-              }
-            }
-          }
-        } else if (index == 2) {
-          print(
-            "between " +
-                inputOne +
-                " and " +
-                inputTwo +
-                " are " +
-                (functions[index](inputOne, inputTwo)).toString() +
-                " halfsteps ",
-          );
-        }
-      } else {
-        print("Invalid input for program '$Programmname'. Please try again.");
-        UserInputs = new Sebilist();
-        startProgramm(programmnames[index]);
-      }
-    }
-  } else if (Programmname == programmnames[3]) {
-    bool check = true;
-    for (int i = 0; i < UserInputs.length(); i++) {
-      if (!isValidTone(
-            UserInputs[i].replaceAll("major", "").replaceAll("minor", ""),
-          ) ||
-          UserInputs[i].isEmpty) {
-        check = false;
-        break;
-      }
-    }
-
-    if (check && checkUserInputAfterChordInput(UserInputs)) {
-      // Direct call to findkey and print its output
-      findkey(UserInputs);
-    } else {
-      print("Invalid input for program '$Programmname'. Please try again.");
-      startProgramm(programmnames[index]);
-    }
-  } else if (Programmname == programmnames[4]) {
-    if (UserInputs.length() < 3) {
-      print(
-        "Incorrect input for transpose. Please provide tones, steps, and direction.",
-      );
-      startProgramm(programmnames[index]);
-    } else {
-      String tonesInput = UserInputs[0];
-      String stepsInput = UserInputs[1];
-      String directionInput = UserInputs[2];
-
-      Sebilist<String> tonesToTranspose = new Sebilist();
-      List<String> rawTones = tonesInput.split(',');
-      bool allTonesValid = true;
-      for (var tone in rawTones) {
-        String trimmedTone = tone.trim().toLowerCase();
-        if (trimmedTone.isNotEmpty && isValidTone(trimmedTone)) {
-          tonesToTranspose.add(trimmedTone);
-        } else if (trimmedTone.isNotEmpty) {
-          print(
-            "Incorrect tone '$trimmedTone' for transpose. Please try again.",
-          );
-          allTonesValid = false;
-          break;
-        }
-      }
-
-      if (!allTonesValid || tonesToTranspose.length() == 0) {
-        print(
-          "Invalid input for tones. Please ensure valid tones are entered.",
-        );
-        startProgramm(programmnames[index]);
-      } else {
-        int? steps = int.tryParse(stepsInput);
-        if (steps == null || steps < 0) {
-          print("Invalid input for steps. Please enter a positive number.");
-          startProgramm(programmnames[index]);
-        } else {
-          if (directionInput != "+" && directionInput != "-") {
-            print(
-              "Invalid input for direction. Please enter '+' or '-' instead of '$directionInput'.",
-            );
-            startProgramm(programmnames[index]);
-          } else {
-            transpose(tonesToTranspose, steps, directionInput);
-          }
-        }
-      }
-    }
-  } else if (Programmname == programmnames[5]) {
-    if (UserInputs.length() < 3) {
-      print("To find chords, please enter at least 3 tones.");
-      startProgramm(programmnames[index]);
-    } else {
-      Sebilist<String> foundChords = functions[index](UserInputs);
-      if (foundChords.length() > 0) {
-        print(
-          "From the tones ${UserInputs.toString()}, the following major or minor chords were found:",
-        );
-        for (int i = 0; i < foundChords.length(); i++) {
-          print("- ${foundChords[i]}");
-        }
-      } else {
-        print(
-          "No major or minor chords could be formed from the tones ${UserInputs.toString()}.",
-        );
-      }
-    }
-  }
-}
-
+//Erstellt eine Nutzereingabe und checkt ob diese null ist wenn nicht null 
+//ist der Returnwert die Nutzereingabe
+//wenn Nutzereingabe = null --> rekursiver Aufruf
 String getUserInput() {
   String? input = stdin.readLineSync();
 
@@ -400,103 +267,365 @@ String getUserInput() {
   }
 }
 
-Sebilist<String> createUserInputForProgramms(String Programmname) {
-  Sebilist<String> cromaticScale = createChromaticScale();
-  Sebilist<String> UserInputs = new Sebilist();
+//ruft abhängig davon welches der Programm der Benutzer starten möchte (Programmname), das entsprechende Programm
+void startProgramm(String Programmname) {
+  int index = programmnames.indexOf(Programmname);
 
-  if (Programmname == programmnames[0] || Programmname == programmnames[1]) {
-    print(
-      "Please enter your desired base tone. \n"
-      " (${cromaticScale})",
-    );
+  // Use a switch statement for clearer program handling
+  switch (Programmname) {
+    case "create chord tones":
+    case "create scales":
+    case "calcutlate intervall from 2 tones":
+      handleToneAndModePrograms(Programmname, index);
+      break;
+    case "find the key the most chords are maching":
+      handleFindKeyProgram(Programmname, index);
+      break;
+    case "transpose a list of notes transpose":
+      handleTransposeProgram(Programmname, index);
+      break;
+    case "find all chords that can be created from tones in a list":
+      handleFindChordsProgram(Programmname, index);
+      break;
+    default:
+      print("Unknown program: $Programmname");
+  }
+}
 
-    String chord = getUserInput();
-    print("Please enter your desired mode. (major/minor)");
-    String mode = getUserInput();
+//startet/überprüft Progamme die eine note und einen Modus oder 2 Töne brauchen)
+//wenn wert nicht richtig --> rekursiver Aufruf über startProgramm
+void handleToneAndModePrograms(String programName, int index) {
+  Sebilist<String> userInputs = getToneAndModeInputs(programName);
 
-    UserInputs.add(chord);
-    UserInputs.add(mode);
-  } else if (Programmname == programmnames[2]) {
-    print(
-      "Please enter your first desired tone. \n"
-      "${cromaticScale})",
-    );
+  if (userInputs.length() < 2) {
+    print("Invalid input for program '$programName'. Please try again.");
+    startProgramm(programmnames[index]);
+    return;
+  }
 
-    String firstTone = getUserInput();
-    print(
-      "Please enter your 2nd desired tone. \n"
-      "${cromaticScale})",
-    );
-    String secondTone = getUserInput();
+  String inputOne = userInputs[0];
+  String inputTwo = userInputs[1];
 
-    UserInputs.add(firstTone);
-    UserInputs.add(secondTone);
-  } else if (Programmname == programmnames[3]) {
-    print(
-      "Please enter your chords in a row, separated by a comma. \n" +
-          "Possible chords are: ${cromaticScale} major/minor",
-    );
+  bool isValid = false;
+  if ((programName == programmnames[0] || programName == programmnames[1]) &&
+      isValidTone(inputOne) &&
+      isValidMode(inputTwo)) {
+    isValid = true;
+  } else if (programName == programmnames[2] &&
+      isValidTone(inputOne) &&
+      isValidTone(inputTwo)) {
+    isValid = true;
+  }
 
-    String? rawInput = getUserInput();
-    if (rawInput.isNotEmpty) {
-      List<String> chords = rawInput
-          .split(',')
-          .map((s) => s.trim().toLowerCase())
-          .toList();
-      for (var chord in chords) {
-        UserInputs.add(chord);
+  if (isValid) {
+    executeToneAndModeProgram(programName, inputOne, inputTwo, index);
+  } else {
+    print("Invalid input for program '$programName'. Please try again.");
+    startProgramm(programmnames[index]);
+  }
+}
+//führt Progamme die eine note und einen Modus brauchen aus und gibt deren ergebnisse aus
+void executeToneAndModeProgram(
+  String programName,
+  String inputOne,
+  String inputTwo,
+  int index,
+) {
+  dynamic result = functions[index](inputOne, inputTwo);
+
+  if (index == 0) {
+    print("The tones from $inputOne $inputTwo are: $result");
+  } else if (index == 1) {
+    Sebilist<String> scale = result as Sebilist<String>;
+    print("The tones from the $inputOne $inputTwo scale are: ");
+    printScaleAnalysis(scale, inputTwo);
+  } else if (index == 2) {
+    print("Between $inputOne and $inputTwo are $result half-steps.");
+  }
+}
+//gibt die Tonleiter und deren entsprechenden Akkorde aus
+void printScaleAnalysis(Sebilist<String> scale, String mode) {
+  for (int i = 0; i < scale.length(); i++) {
+    String tone = scale[i];
+    String chordType = "";
+    if (mode == "major") {
+      if (i == 0 || i == 3 || i == 4) {
+        chordType = "major";
+      } else if (i == 6) {
+        chordType = "minor7b5"; // Diminished triad (m7b5 for diatonic 7th)
+      } else {
+        chordType = "minor";
+      }
+    } else if (mode == "minor") {
+      if (i == 0 || i == 3 || i == 4) {
+        chordType = "minor";
+      } else if (i == 1) {
+        chordType = "minor7b5";
+      } else {
+        chordType = "major";
       }
     }
-  } else if (Programmname == programmnames[4]) {
-    Sebilist<String> cromaticScale = createChromaticScale();
-    print(
-      "Please enter the tones you want to transpose, separated by commas $cromaticScale",
-    );
-    String tonesInput = getUserInput();
-    print("Please enter the number of half steps to transpose (only Integer).");
-    String stepsInput = getUserInput();
-    print("Please enter the direction ('+' for up, '-' for down).");
-    String directionInput = getUserInput();
+    print("$tone --> represents $tone $chordType chord");
+  }
+}
 
-    if (tonesInput.isNotEmpty &&
-        stepsInput.isNotEmpty &&
-        directionInput.isNotEmpty) {
-      UserInputs.add(tonesInput);
-      UserInputs.add(stepsInput);
-      UserInputs.add(directionInput);
-    }
-  } else if (Programmname == programmnames[5]) {
-    print(
-      "Please enter the tones you have, separated by commas. Example: c, e, g \n"
-      "Possible tones are: $cromaticScale",
-    );
-    String? rawInput = getUserInput();
+// New helper function for handling the "find the key" program
+void handleFindKeyProgram(String programName, int index) {
+  Sebilist<String> userInputs = getFindKeyInputs(programName);
+  List<String> userInputsasList = [];
 
-    if (rawInput.isNotEmpty) {
-      List<String> tones = rawInput
-          .split(',')
-          .map((s) => s.trim().toLowerCase())
-          .toList();
+  for (int i = 0; i < userInputs.length(); i++) {
+    userInputsasList.add(userInputs[i]);
+  }
+  bool allInputsValid = true;
+  if (!checkUserInputAfterChordInput(userInputs)) {
+    allInputsValid = false;
+  }
 
-      for (var tone in tones) {
-        if (isValidTone(tone)) {
-          UserInputs.add(tone);
-        } else {
-          print(
-            "Invalid tone '$tone' detected. Please enter valid tones from the chromatic scale.",
-          );
-
-          return createUserInputForProgramms(Programmname);
-        }
-      }
-    } else {
-      print("No tones entered. Please try again.");
-
-      return createUserInputForProgramms(Programmname);
+  // Also check if individual chord inputs are valid tones (e.g., "cmajor" -> "c")
+  for (var chordInput in userInputsasList) {
+    String tonePart = chordInput
+        .replaceAll("major", "")
+        .replaceAll("minor", "");
+    if (!isValidTone(tonePart) || tonePart.isEmpty) {
+      allInputsValid = false;
+      break;
     }
   }
 
-  return UserInputs;
+  if (allInputsValid && userInputs.length() > 0) {
+    functions[index](userInputs);
+  } else {
+    print("Invalid input for program '$programName'. Please try again.");
+    startProgramm(programmnames[index]);
+  }
+}
+
+// New helper function for handling the "transpose" program
+void handleTransposeProgram(String programName, int index) {
+  Sebilist<String> userInputs = getTransposeInputs(programName);
+
+  if (userInputs.length() < 3) {
+    print(
+      "Incorrect input for transpose. Please provide tones, steps, and direction.",
+    );
+    startProgramm(programmnames[index]);
+    return;
+  }
+
+  String tonesInput = userInputs[0];
+  String stepsInput = userInputs[1];
+  String directionInput = userInputs[2];
+
+  Sebilist<String> tonesToTranspose = Sebilist();
+  List<String> rawTones = tonesInput.split(',');
+  bool allTonesValid = true;
+  for (var tone in rawTones) {
+    String trimmedTone = tone.trim().toLowerCase();
+    if (trimmedTone.isNotEmpty && isValidTone(trimmedTone)) {
+      tonesToTranspose.add(trimmedTone);
+    } else if (trimmedTone.isNotEmpty) {
+      print("Incorrect tone '$trimmedTone' for transpose. Please try again.");
+      allTonesValid = false;
+      break;
+    }
+  }
+
+  if (!allTonesValid || tonesToTranspose.length() == 0) {
+    print("Invalid input for tones. Please ensure valid tones are entered.");
+    startProgramm(programmnames[index]);
+    return;
+  }
+
+  int? steps = int.tryParse(stepsInput);
+  if (steps == null || steps < 0) {
+    print("Invalid input for steps. Please enter a positive number.");
+    startProgramm(programmnames[index]);
+    return;
+  }
+
+  if (directionInput != "+" && directionInput != "-") {
+    print(
+      "Invalid input for direction. Please enter '+' or '-' instead of '$directionInput'.",
+    );
+    startProgramm(programmnames[index]);
+    return;
+  }
+
+  transpose(tonesToTranspose, steps, directionInput);
+}
+
+// New helper function for handling the "find chords" program
+void handleFindChordsProgram(String programName, int index) {
+  Sebilist<String> userInputs = getChordsInputs(programName);
+
+  if (userInputs.length() < 3) {
+    print("To find chords, please enter at least 3 tones.");
+    startProgramm(programmnames[index]);
+    return;
+  }
+
+  Sebilist<String> foundChords = functions[index](userInputs);
+  if (foundChords.length() > 0) {
+    print(
+      "From the tones ${userInputs.toString()}, the following major or minor chords were found:",
+    );
+    for (int i = 0; i < foundChords.length(); i++) {
+      print("- ${foundChords[i]}");
+    }
+  } else {
+    print(
+      "No major or minor chords could be formed from the tones ${userInputs.toString()}.",
+    );
+  }
+}
+
+// Refactored createUserInputForProgramms
+Sebilist<String> createUserInputForProgramms(String Programmname) {
+  switch (Programmname) {
+    case "create chord tones":
+    case "create scales":
+      return getToneAndModeInputs(Programmname);
+    case "calcutlate intervall from 2 tones":
+      return getTwoToneInputs(Programmname);
+    case "find the key the most chords are maching":
+      return getFindKeyInputs(Programmname);
+    case "transpose a list of notes transpose":
+      return getTransposeInputs(Programmname);
+    case "find all chords that can be created from tones in a list":
+      return getChordsInputs(Programmname);
+    default:
+      return Sebilist<String>(); // Should not happen with current logic
+  }
+}
+
+// New helper function to get tone and mode inputs
+Sebilist<String> getToneAndModeInputs(String programName) {
+  Sebilist<String> userInputs = Sebilist();
+  Sebilist<String> chromaticScale = createChromaticScale();
+
+  print(
+    "Please enter your desired base tone. \n"
+    "Possible tones: $chromaticScale",
+  );
+  String tone = getUserInput();
+
+  print("Please enter your desired mode. (major/minor)");
+  String mode = getUserInput();
+
+  userInputs.add(tone);
+  userInputs.add(mode);
+  return userInputs;
+}
+
+// New helper function to get two tone inputs
+Sebilist<String> getTwoToneInputs(String programName) {
+  Sebilist<String> userInputs = Sebilist();
+  Sebilist<String> chromaticScale = createChromaticScale();
+
+  print(
+    "Please enter your first desired tone. \n"
+    "Possible tones: $chromaticScale",
+  );
+  String firstTone = getUserInput();
+
+  print(
+    "Please enter your 2nd desired tone. \n"
+    "Possible tones: $chromaticScale",
+  );
+  String secondTone = getUserInput();
+
+  userInputs.add(firstTone);
+  userInputs.add(secondTone);
+  return userInputs;
+}
+
+// New helper function to get find key inputs (chords)
+Sebilist<String> getFindKeyInputs(String programName) {
+  Sebilist<String> userInputs = Sebilist();
+  Sebilist<String> chromaticScale = createChromaticScale();
+  List<String> chromaticScaleasList = [];
+
+  for (int i = 0; i < chromaticScale.length(); i++) {
+    chromaticScaleasList.add(chromaticScale[i]);
+  }
+  print(
+    "Please enter your chords in a row, separated by a comma. \n"
+    "Possible chords are: ${chromaticScaleasList} Major/Minor",
+  );
+
+  String rawInput = getUserInput();
+  if (rawInput.isNotEmpty) {
+    List<String> chords = rawInput
+        .split(',')
+        .map((s) => s.trim().toLowerCase())
+        .toList();
+    for (var chord in chords) {
+      userInputs.add(chord);
+    }
+  }
+  return userInputs;
+}
+
+// New helper function to get transpose inputs
+Sebilist<String> getTransposeInputs(String programName) {
+  Sebilist<String> userInputs = Sebilist();
+  Sebilist<String> chromaticScale = createChromaticScale();
+
+  print(
+    "Please enter the tones you want to transpose, separated by commas.\n"
+    "Possible tones: $chromaticScale",
+  );
+  String tonesInput = getUserInput();
+
+  print("Please enter the number of half steps to transpose (only Integer).");
+  String stepsInput = getUserInput();
+
+  print("Please enter the direction ('+' for up, '-' for down).");
+  String directionInput = getUserInput();
+
+  if (tonesInput.isNotEmpty &&
+      stepsInput.isNotEmpty &&
+      directionInput.isNotEmpty) {
+    userInputs.add(tonesInput);
+    userInputs.add(stepsInput);
+    userInputs.add(directionInput);
+  }
+  return userInputs;
+}
+
+Sebilist<String> getChordsInputs(String programName) {
+  Sebilist<String> userInputs = Sebilist();
+  Sebilist<String> chromaticScale = createChromaticScale();
+
+  print(
+    "Please enter the tones you have, separated by commas. Example: \n"
+    "Possible tones are: $chromaticScale",
+  );
+  String rawInput = getUserInput();
+
+  if (rawInput.isNotEmpty) {
+    List<String> tones = rawInput
+        .split(',')
+        .map((s) => s.trim().toLowerCase())
+        .toList();
+
+    for (var tone in tones) {
+      if (isValidTone(tone)) {
+        userInputs.add(tone);
+      } else {
+        print(
+          "Invalid tone '$tone' detected. Please enter valid tones from the chromatic scale.",
+        );
+        // Recursively call to re-prompt for input if invalid tone is found
+        return getChordsInputs(programName);
+      }
+    }
+  } else {
+    print("No tones entered. Please try again.");
+    return getChordsInputs(programName);
+  }
+  return userInputs;
 }
 
 bool checkUserInputAfterChordInput(Sebilist<String> liste) {
