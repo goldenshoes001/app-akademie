@@ -8,6 +8,7 @@ List<String> programmnames = [
   "intervall",
   "findkey",
   "transpose",
+  "findChords",
 ];
 List<Function> functions = [
   createChord,
@@ -15,10 +16,47 @@ List<Function> functions = [
   calculateIntervalFromTwoTones,
   findkey,
   transpose,
+  findChords,
 ];
 
 void main() {
   chooseProgramm();
+}
+
+Sebilist<String> findChords(Sebilist<String> toneList) {
+  Sebilist<String> foundChords = new Sebilist();
+  Sebilist<String> chromaticScale = createChromaticScale();
+
+  // Keine Sortierung oder Duplikatsprüfung für toneList, da Sebilist das intern verwaltet
+
+  // Iteriere durch jeden möglichen Grundton der chromatischen Skala
+  for (int i = 0; i < chromaticScale.length(); i++) {
+    String rootTone = chromaticScale[i];
+
+    // Versuche, einen Dur-Akkord zu bilden und zu überprüfen
+    Sebilist<String> majorChordTones = createChord(rootTone, "major");
+    // Überprüfe, ob alle Töne des Dur-Akkords in der Eingabeliste vorhanden sind
+    if (majorChordTones.length() == 3 &&
+        toneList.contains(majorChordTones[0]) &&
+        toneList.contains(majorChordTones[1]) &&
+        toneList.contains(majorChordTones[2])) {
+      // Füge den Akkordnamen hinzu. Sebilist sollte Duplikate hier selbst handhaben.
+      foundChords.add("$rootTone" + "major");
+    }
+
+    // Versuche, einen Moll-Akkord zu bilden und zu überprüfen
+    Sebilist<String> minorChordTones = createChord(rootTone, "minor");
+    // Überprüfe, ob alle Töne des Moll-Akkords in der Eingabeliste vorhanden sind
+    if (minorChordTones.length() == 3 &&
+        toneList.contains(minorChordTones[0]) &&
+        toneList.contains(minorChordTones[1]) &&
+        toneList.contains(minorChordTones[2])) {
+      // Füge den Akkordnamen hinzu. Sebilist sollte Duplikate hier selbst handhaben.
+      foundChords.add("$rootTone" + "minor");
+    }
+  }
+
+  return foundChords;
 }
 
 void transpose(Sebilist<String> liste, int steps, String plusOrMinus) {
@@ -57,7 +95,8 @@ void chooseProgramm() {
     print("2 --> Calculate Interval");
     print("3 --> Find Key");
     print("4 --> Transpose");
-    print("Type anything other than 0, 1, 2, 3, 4 to exit the program.");
+    print("5 --> find chords");
+    print("Type anything other than 0, 1, 2, 3, 4, 5 to exit the program.");
     print("---------------------\n");
 
     String? userInput = stdin.readLineSync();
@@ -333,6 +372,27 @@ void startProgramm(String Programmname) {
         }
       }
     }
+  } else if (Programmname == programmnames[5]) {
+    if (UserInputs.length() < 3) {
+      print("To find chords, please enter at least 3 tones.");
+      startProgramm(
+        programmnames[index],
+      ); // Startet das Programm neu, wenn zu wenige Töne
+    } else {
+      Sebilist<String> foundChords = functions[index](UserInputs);
+      if (foundChords.length() > 0) {
+        print(
+          "From the tones ${UserInputs.toString()}, the following major or minor chords were found:",
+        );
+        for (int i = 0; i < foundChords.length(); i++) {
+          print("- ${foundChords[i]}");
+        }
+      } else {
+        print(
+          "No major or minor chords could be formed from the tones ${UserInputs.toString()}.",
+        );
+      }
+    }
   }
 }
 
@@ -412,6 +472,35 @@ Sebilist<String> createUserInputForProgramms(String Programmname) {
       UserInputs.add(stepsInput);
       UserInputs.add(directionInput);
     }
+  } else if (Programmname == programmnames[5]) {
+    print(
+      "Please enter the tones you have, separated by commas. Example: c, e, g \n"
+      "Possible tones are: $cromaticScale",
+    );
+    String? rawInput = getUserInput();
+
+    if (rawInput.isNotEmpty) {
+      List<String> tones = rawInput
+          .split(',')
+          .map((s) => s.trim().toLowerCase())
+          .toList();
+
+      for (var tone in tones) {
+        if (isValidTone(tone)) {
+          UserInputs.add(tone);
+        } else {
+          print(
+            "Invalid tone '$tone' detected. Please enter valid tones from the chromatic scale.",
+          );
+
+          return createUserInputForProgramms(Programmname);
+        }
+      }
+    } else {
+      print("No tones entered. Please try again.");
+
+      return createUserInputForProgramms(Programmname);
+    }
   }
 
   return UserInputs;
@@ -445,13 +534,9 @@ bool isValidMode(String mode) {
   return mode == "major" || mode == "minor";
 }
 
-// Helper function to get diatonic chords for a given key and mode
 Sebilist<String> getDiatonicChordsForScale(String tone, String mode) {
   Sebilist<String> diatonicChords = new Sebilist();
-  Sebilist<String> scaleTones = createScale(
-    tone,
-    mode,
-  ); // Convert Sebilist to List
+  Sebilist<String> scaleTones = createScale(tone, mode);
 
   List<String> majorChordQualities = [
     "major",
@@ -470,7 +555,7 @@ Sebilist<String> getDiatonicChordsForScale(String tone, String mode) {
     "minor",
     "major",
     "major",
-  ]; // Natural minor
+  ];
 
   List<String> qualities = (mode == "major")
       ? majorChordQualities
@@ -483,8 +568,6 @@ Sebilist<String> getDiatonicChordsForScale(String tone, String mode) {
   return diatonicChords;
 }
 
-// Finds the most likely key based on a list of chords and
-// prints which tones from the chords are not in the identified key's scale.
 void findkey(Sebilist<String> chordlist) {
   String detectedKey = "";
 
@@ -509,7 +592,6 @@ void findkey(Sebilist<String> chordlist) {
 
   detectedKey = chordlist[listOfCounter.indexOf(getMaxValue(listOfCounter))];
 
-  // Determine the scale of the detected key
   String keyTone = cutChordFromChordTotal(detectedKey, "m");
   String keyMode = cutModFromChordTotal(detectedKey, "m");
   Sebilist<String> detectedKeyScale = createScale(keyTone, keyMode);
@@ -518,7 +600,6 @@ void findkey(Sebilist<String> chordlist) {
     keyMode,
   );
 
-  // Find tones not in the detected key's scale
   Sebilist<String> outOfKeyTones = new Sebilist();
   for (int i = 0; i < allChordTones.length(); i++) {
     if (!detectedKeyScale.contains(allChordTones[i])) {
@@ -526,7 +607,6 @@ void findkey(Sebilist<String> chordlist) {
     }
   }
 
-  // Find chords not in the detected key's diatonic chords
   Sebilist<String> outOfKeyChords = new Sebilist();
   for (int i = 0; i < chordlist.length(); i++) {
     if (!diatonicChordsInKey.contains(chordlist[i])) {
