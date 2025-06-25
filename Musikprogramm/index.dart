@@ -121,6 +121,7 @@ int? getProgramChoice() {
   }
   return null; // Gibt null zurück, wenn die Eingabe ungültig ist
 }
+
 /*
 Checkt ob die eingegebene Zahl:
 - in der Range der Programme ist
@@ -155,6 +156,7 @@ void printPotencialProgramms() {
   print("Type anything else to exit the program.");
   print("---------------------\n");
 }
+
 //prüft ob der Wert der eingegeben wurde eine Zahl ist
 bool checkUserInputIsNumber(String? UserInput) {
   if (num.tryParse(UserInput!) != null) {
@@ -162,8 +164,9 @@ bool checkUserInputIsNumber(String? UserInput) {
   }
   return false;
 }
+
 //erstellt chromatische Tonleiter
-// Rückgabewert ist die chromatische Liste 
+// Rückgabewert ist die chromatische Liste
 Sebilist<String> createChromaticScale() {
   List<String> grundTone = ["c", "d", "e", "f", "g", "a", "b"];
   Sebilist<String> cromaticScale = new Sebilist();
@@ -181,6 +184,7 @@ Sebilist<String> createChromaticScale() {
 
   return cromaticScale;
 }
+
 //erstellt dur/moll akkord jenach dem ob mod major oder minor ist
 Sebilist<String> createChord(String tone, String Mod) {
   Sebilist<String> Chord = new Sebilist();
@@ -210,6 +214,7 @@ Sebilist<String> createChord(String tone, String Mod) {
 
   return Chord;
 }
+
 //berechnet Halbtonschritte zwischen 2 tönen und gibt die anzahl der Schritte dann als return zurück
 int calculateIntervalFromTwoTones(String toneOne, String toneTwo) {
   Sebilist<String> cromaticScale = createChromaticScale();
@@ -226,6 +231,7 @@ int calculateIntervalFromTwoTones(String toneOne, String toneTwo) {
 
   return result;
 }
+
 //erstellt Tonleiter von dem Ton (c,c#,d,d#,e,f,f#,g,g#,a,b) und dem Modus (Major,Minor) der übergeben wurde
 Sebilist<String> createScale(String tone, String mod) {
   Sebilist<String> Scale = new Sebilist();
@@ -253,7 +259,8 @@ Sebilist<String> createScale(String tone, String mod) {
 
   return Scale;
 }
-//Erstellt eine Nutzereingabe und checkt ob diese null ist wenn nicht null 
+
+//Erstellt eine Nutzereingabe und checkt ob diese null ist wenn nicht null
 //ist der Returnwert die Nutzereingabe
 //wenn Nutzereingabe = null --> rekursiver Aufruf
 String getUserInput() {
@@ -292,7 +299,9 @@ void startProgramm(String Programmname) {
   }
 }
 
-//startet/überprüft Progamme die eine note und einen Modus oder 2 Töne brauchen)
+//startet Progamme bzw. überprüft Nutzereingaben
+//für Programme,
+// die eine note und einen Modus oder 2 Töne brauchen
 //wenn wert nicht richtig --> rekursiver Aufruf über startProgramm
 void handleToneAndModePrograms(String programName, int index) {
   Sebilist<String> userInputs = getToneAndModeInputs(programName);
@@ -324,7 +333,9 @@ void handleToneAndModePrograms(String programName, int index) {
     startProgramm(programmnames[index]);
   }
 }
-//führt Progamme die eine note und einen Modus brauchen aus und gibt deren ergebnisse aus
+
+// gibt die Results für Programme aus,
+// die eine note und einen Modus brauchen
 void executeToneAndModeProgram(
   String programName,
   String inputOne,
@@ -343,6 +354,7 @@ void executeToneAndModeProgram(
     print("Between $inputOne and $inputTwo are $result half-steps.");
   }
 }
+
 //gibt die Tonleiter und deren entsprechenden Akkorde aus
 void printScaleAnalysis(Sebilist<String> scale, String mode) {
   for (int i = 0; i < scale.length(); i++) {
@@ -369,7 +381,10 @@ void printScaleAnalysis(Sebilist<String> scale, String mode) {
   }
 }
 
-// New helper function for handling the "find the key" program
+// überprüft die Nutzereingaben für die Funktion findkey
+// --> bei richtiger Eingabe wird die Funktion findkey aufgerufen
+// --> bei falscher Eingabe wird die Funktion startProgramm mit dem
+//     Index von findkey gestartet ( Nutzer muss nochmal Benutzereingaben eingeben)
 void handleFindKeyProgram(String programName, int index) {
   Sebilist<String> userInputs = getFindKeyInputs(programName);
   List<String> userInputsasList = [];
@@ -401,7 +416,10 @@ void handleFindKeyProgram(String programName, int index) {
   }
 }
 
-// New helper function for handling the "transpose" program
+// überprüft die Nutzereingaben für die Funktion transpose
+// --> bei richtiger Eingabe wird die Funktion transpose aufgerufen
+// --> bei falscher Eingabe wird die Funktion startProgramm mit dem
+//     Index von trabsoise gestartet ( Nutzer muss nochmal Benutzereingaben eingeben)
 void handleTransposeProgram(String programName, int index) {
   Sebilist<String> userInputs = getTransposeInputs(programName);
 
@@ -455,7 +473,10 @@ void handleTransposeProgram(String programName, int index) {
   transpose(tonesToTranspose, steps, directionInput);
 }
 
-// New helper function for handling the "find chords" program
+// überprüft die Nutzereingaben für die Funktion handleFindChordsProgramm
+// --> bei richtiger Eingabe wird die Funktion FindChordsProgram aufgerufen
+// --> bei falscher Eingabe wird die Funktion startProgramm mit dem
+//     Index von FindCHordsProgram gestartet ( Nutzer muss nochmal Benutzereingaben eingeben)
 void handleFindChordsProgram(String programName, int index) {
   Sebilist<String> userInputs = getChordsInputs(programName);
 
@@ -480,7 +501,8 @@ void handleFindChordsProgram(String programName, int index) {
   }
 }
 
-// Refactored createUserInputForProgramms
+//erstellt für das jeweilige Programm die Nutzereingaben und gibt die
+// anschließend im Result zurück
 Sebilist<String> createUserInputForProgramms(String Programmname) {
   switch (Programmname) {
     case "create chord tones":
@@ -499,7 +521,8 @@ Sebilist<String> createUserInputForProgramms(String Programmname) {
   }
 }
 
-// New helper function to get tone and mode inputs
+// erstellt die Nutzereingaben für Programme,
+// die einen Ton und einen Modus (Major,Minor) brauchen
 Sebilist<String> getToneAndModeInputs(String programName) {
   Sebilist<String> userInputs = Sebilist();
   Sebilist<String> chromaticScale = createChromaticScale();
@@ -518,7 +541,8 @@ Sebilist<String> getToneAndModeInputs(String programName) {
   return userInputs;
 }
 
-// New helper function to get two tone inputs
+// erstellt die Nutzereingaben für Programme,
+// die 2 Töne --> Ton(c,c#,d,d#,e,f,f#,g,g#,a,b) brauchen
 Sebilist<String> getTwoToneInputs(String programName) {
   Sebilist<String> userInputs = Sebilist();
   Sebilist<String> chromaticScale = createChromaticScale();
@@ -540,7 +564,8 @@ Sebilist<String> getTwoToneInputs(String programName) {
   return userInputs;
 }
 
-// New helper function to get find key inputs (chords)
+// erstellt die Nutzereingaben für das Programm findKey
+// --> Ton(c,c#,d,d#,e,f,f#,g,g#,a,b) + Mode (Major/Minor)
 Sebilist<String> getFindKeyInputs(String programName) {
   Sebilist<String> userInputs = Sebilist();
   Sebilist<String> chromaticScale = createChromaticScale();
@@ -567,7 +592,10 @@ Sebilist<String> getFindKeyInputs(String programName) {
   return userInputs;
 }
 
-// New helper function to get transpose inputs
+// erstellt die Nutzereingaben für das Programm Transpose
+// Liste von tönen --> Ton(c,c#,d,d#,e,f,f#,g,g#,a,b)
+// Operation (+/-)
+// Anzahl Halbtonschritte als Ganzzahl
 Sebilist<String> getTransposeInputs(String programName) {
   Sebilist<String> userInputs = Sebilist();
   Sebilist<String> chromaticScale = createChromaticScale();
@@ -593,7 +621,8 @@ Sebilist<String> getTransposeInputs(String programName) {
   }
   return userInputs;
 }
-
+// erstellt die Nutzereingaben für das Programm get chords
+// --> Liste von Tönen (c,c#,d,d#,e,f,f#,g,g#,a,b)
 Sebilist<String> getChordsInputs(String programName) {
   Sebilist<String> userInputs = Sebilist();
   Sebilist<String> chromaticScale = createChromaticScale();
@@ -627,6 +656,9 @@ Sebilist<String> getChordsInputs(String programName) {
   }
   return userInputs;
 }
+//überprüft ob die Liste die der Funktion übergeben wird
+// auch aus Akkorden besteht 
+//--> Ton(c,c#,d,d#,e,f,f#,g,g#,a,b) + Mode (Major/Minor)
 
 bool checkUserInputAfterChordInput(Sebilist<String> liste) {
   Sebilist<String> cromanticScale = createChromaticScale();
@@ -646,16 +678,18 @@ bool checkUserInputAfterChordInput(Sebilist<String> liste) {
 
   return checker;
 }
-
+//überprüft ob der übergebene String wirklich ein Ton ist
+// --> (c,c#,d,d#,e,f,f#,g,g#,a,b)
 bool isValidTone(String tone) {
   return createChromaticScale().contains(tone.toLowerCase());
 }
-
+//überprüft ob der String der übergeben wird auch wirklich ein mode (Major/Minor) ist
 bool isValidMode(String mode) {
   mode = mode.toLowerCase();
   return mode == "major" || mode == "minor";
 }
-
+// erstelt eine Tonart mit den entsprechenden repräsentativen Akkorden
+// und gibt diese als Liste dann zurück
 Sebilist<String> getDiatonicChordsForScale(String tone, String mode) {
   Sebilist<String> diatonicChords = new Sebilist();
   Sebilist<String> scaleTones = createScale(tone, mode);
@@ -689,7 +723,17 @@ Sebilist<String> getDiatonicChordsForScale(String tone, String mode) {
 
   return diatonicChords;
 }
-
+//berechnet den Tonart bassierend auf einer Liste von Akkorden die dem Programm
+// als Parameter übergeben wird
+// dabei wird eine liste erstellt, in der alle Akkordtöne der Akkorde
+// der übergebenen Liste enthalten sind
+// Anschließend wird vom jeweiligen grundton des Akkords die Tonleiter gebildet
+// und dann wird überprüft ob alle Töne der liste aller Akkordtöne alle in dieser Tonart
+// sind wenn ja ist es die gesuchte Tonart wenn nicht wird weitergesucht
+// am Schluss wird entweder die entsprechende Tonart ausgegeben oder 
+// die Tonart die am besten passt und dann wird auch ausgegeben
+// welcher Ton/Töne und damit auch welche Akkorde
+// nicht in der entsprechenden Tonart sind
 void findkey(Sebilist<String> chordlist) {
   String detectedKey = "";
 
@@ -755,14 +799,15 @@ void findkey(Sebilist<String> chordlist) {
   }
   print("--------------------\n");
 }
-
+// ermittelt in einer Liste den höchsten Integer und gibt diesen dann auch aus
 int getMaxValue(List<int> resultList) {
   if (resultList.isEmpty) {
     return 0;
   }
   return resultList.reduce((currentMax, element) => max(currentMax, element));
 }
-
+// splittet einen String an dem Buchtaben m auf und gibt dann beide entstandenen
+// Strings in einer liste im return zurück
 List<String> getSortedListFromChords(Sebilist<String> chordlist) {
   List<String> cutedChords = [];
 
@@ -775,7 +820,8 @@ List<String> getSortedListFromChords(Sebilist<String> chordlist) {
 
   return cutedChords;
 }
-
+//splittet Strings auch bei einem m und gibt dann die jeweiligen töne in 
+// einer liste zurück (cmajor wird zum beispiel zu c)
 String cutChordFromChordTotal(String element, String char) {
   int index = element.indexOf(char);
   String subStringOne = "";
@@ -788,6 +834,8 @@ String cutChordFromChordTotal(String element, String char) {
 
   return subStringOne;
 }
+//splittet Strings auch bei einem m und gibt dann die jeweiligen töne in 
+// einer liste zurück (cmajor wird zum beispiel zu c)
 
 String cutModFromChordTotal(String element, String char) {
   int index = element.indexOf(char);
@@ -801,7 +849,8 @@ String cutModFromChordTotal(String element, String char) {
 
   return subString;
 }
-
+//erstellt aus einer Liste von Akkorden die Töne der Akkorde,
+// speichert diese in einer Liste und gibt diese dann im return zurück
 Sebilist<String> getChordTonesFromUserInputList(Sebilist<String> list) {
   Sebilist<String> chordTonesTotal = new Sebilist();
   List<String> chordTonesListed = getSortedListFromChords(list);
