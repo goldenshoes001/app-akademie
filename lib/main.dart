@@ -84,6 +84,16 @@ class MainApp extends StatelessWidget {
                 ),
               ],
             ),
+
+            Row(
+              // spacing: 16,
+              children: [
+                SizedBox(width: 50),
+                Icon(Icons.face, size: 64),
+                SizedBox(width: 50),
+                Icon(Icons.face, size: 64),
+              ],
+            ),
           ],
         ),
       ),
