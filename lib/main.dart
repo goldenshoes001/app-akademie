@@ -42,6 +42,46 @@ class MainApp extends StatelessWidget {
                     ),
                   ),
                 ),
+
+                Container(
+                  width: 100,
+                  height: 100,
+                  color: Colors.green,
+
+                  child: Center(
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.blueAccent,
+                      ),
+                      child: Center(
+                        child: Text("B", style: TextStyle(color: Colors.white)),
+                      ),
+                    ),
+                  ),
+                ),
+
+                Container(
+                  width: 100,
+                  height: 100,
+                  color: Colors.lightBlue,
+
+                  child: Center(
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.blueAccent,
+                      ),
+                      child: Center(
+                        child: Text("C", style: TextStyle(color: Colors.white)),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ],
