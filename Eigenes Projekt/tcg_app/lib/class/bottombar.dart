@@ -8,6 +8,16 @@ class Bottombar extends StatefulWidget {
   State<Bottombar> createState() => _BottombarState();
 }
 
+IconThemeData iconThemedata = IconThemeData(
+  color: Appdata.selectedItemColor,
+  size: 30,
+);
+
+TextStyle textSelected = TextStyle(
+  color: Appdata.selectedItemColor,
+  fontFamily: "Arial",
+);
+
 class _BottombarState extends State<Bottombar> {
   int _selectedIndex = 0;
 
@@ -19,14 +29,14 @@ class _BottombarState extends State<Bottombar> {
 
   TextStyle _getLabelTextStyle(Set<WidgetState> states) {
     if (states.contains(WidgetState.selected)) {
-      return TextStyle(color: Appdata.selectedItemColor);
+      return textSelected;
     }
     return TextStyle(color: Appdata.buttomBarElemente);
   }
 
   IconThemeData _getIconThemeData(Set<WidgetState> states) {
     if (states.contains(WidgetState.selected)) {
-      return IconThemeData(color: Appdata.selectedItemColor);
+      return iconThemedata;
     }
     return IconThemeData(color: Appdata.buttomBarElemente);
   }
@@ -56,7 +66,7 @@ class _BottombarState extends State<Bottombar> {
             label: "Meta",
           ),
         ],
-        indicatorColor: Colors.grey,
+        indicatorColor: Appdata.indicatorColor,
         backgroundColor: Appdata.barColor,
         surfaceTintColor: Appdata.buttomBarElemente,
         selectedIndex: _selectedIndex,

@@ -43,11 +43,13 @@ class _MainAppState extends State<MainApp> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20.0), //
+                  padding: const EdgeInsets.symmetric(
+                    vertical: Appdata.bildPadding,
+                  ),
                   child: Image.asset(
                     'assets/images/appicon.png',
                     fit: BoxFit.contain,
-                    height: 400,
+                    width: Appdata.bildwith,
                   ),
                 ),
                 Text(
