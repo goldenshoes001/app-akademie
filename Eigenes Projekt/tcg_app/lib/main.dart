@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tcg_app/class/appbar.dart';
 import 'package:tcg_app/class/appdata.dart';
 import 'package:tcg_app/class/bottombar.dart';
+import 'package:tcg_app/class/text_widget.dart';
 
 void main() {
   runApp(MainApp());
@@ -25,42 +26,32 @@ class _MainAppState extends State<MainApp> {
         body: Container(
           height: double.infinity,
           color: Appdata.bodyBackground,
-
           child: Center(
-            // Verwende Center, um den Inhalt der Column zu zentrieren
-            child: Column(
-              mainAxisAlignment:
-                  MainAxisAlignment.center, // Zentriert die Kinder vertikal
-              crossAxisAlignment:
-                  CrossAxisAlignment.center, // Zentriert die Kinder horizontal
-              children: [
-                Text(
-                  "Willkommen bei",
-                  style: TextStyle(
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextWidget(
+                    text: "Willkommen bei",
                     fontSize: Appdata.header,
                     fontWeight: Appdata.bold,
-                    color: Appdata.textColor, //
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: Appdata.bildPadding,
-                  ),
-                  child: Image.asset(
-                    'assets/images/appicon.png',
-                    fit: BoxFit.contain,
-                    width: Appdata.bildwith,
-                  ),
-                ),
-                Text(
-                  "Ihrer TCG App des Vertrauens",
-                  style: TextStyle(
-                    fontSize: Appdata.textSize, //
-
                     color: Appdata.textColor,
                   ),
-                ),
-              ],
+                  SizedBox(
+                    height: Appdata.differenceBetweenImageText,
+                  ), // Kontrollierbarer Abstand
+                  Image.asset('assets/images/appicon.png'),
+                  SizedBox(
+                    height: Appdata.differenceBetweenImageText,
+                  ), // Kontrollierbarer Abstand
+                  TextWidget(
+                    text: "Ihrer TCG App des Vertrauens",
+                    fontSize: Appdata.textSize,
+                    color: Appdata.textColor,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

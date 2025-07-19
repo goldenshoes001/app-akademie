@@ -68,9 +68,11 @@ class _BottombarState extends State<Bottombar> {
         ],
         indicatorColor: Appdata.indicatorColor,
         backgroundColor: Appdata.barColor,
-        surfaceTintColor: Appdata.buttomBarElemente,
+        surfaceTintColor: Colors.transparent,
         selectedIndex: _selectedIndex,
         onDestinationSelected: _onItemTapped,
+        elevation: 0,
+        shadowColor: Colors.transparent,
       ),
     );
   }
