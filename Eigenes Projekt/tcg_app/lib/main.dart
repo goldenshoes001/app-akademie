@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:tcg_app/class/appbar.dart';
 import 'package:tcg_app/class/appdata.dart';
 import 'package:tcg_app/class/bottombar.dart';
-import 'package:tcg_app/class/text_widget.dart';
+import 'package:tcg_app/class/home.dart';
+import 'package:tcg_app/class/profile.dart';
+import 'package:tcg_app/class/search.dart';
+import 'package:tcg_app/class/meta.dart';
 
 void main() {
   runApp(MainApp());
@@ -17,45 +20,53 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
+  int _selectedIndex = 0;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<Widget> widgetListe = [Home(), Search(), Profile(), Meta()];
+    List<NavigationDestination> iconList = [
+      NavigationDestination(icon: Icon(Icons.home), label: "home"),
+      NavigationDestination(icon: Icon(Icons.search), label: "search"),
+      NavigationDestination(icon: Icon(Icons.person), label: "profile"),
+      NavigationDestination(
+        icon: Icon(Icons.local_fire_department),
+        label: "Meta",
+      ),
+    ];
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: Barwidget(),
+        appBar: Barwidget(barColor: Appdata.barColor),
         body: Container(
           height: double.infinity,
           color: Appdata.bodyBackground,
           child: Center(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextWidget(
-                    text: "Willkommen bei",
-                    fontSize: Appdata.header,
-                    fontWeight: Appdata.bold,
-                    color: Appdata.textColor,
-                  ),
-                  SizedBox(
-                    height: Appdata.differenceBetweenImageText,
-                  ), // Kontrollierbarer Abstand
-                  Image.asset('assets/images/appicon.png'),
-                  SizedBox(
-                    height: Appdata.differenceBetweenImageText,
-                  ), // Kontrollierbarer Abstand
-                  TextWidget(
-                    text: "Ihrer TCG App des Vertrauens",
-                    fontSize: Appdata.textSize,
-                    color: Appdata.textColor,
-                  ),
-                ],
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [widgetListe[_selectedIndex]],
             ),
           ),
         ),
-        bottomNavigationBar: Bottombar(),
+        bottomNavigationBar: Bottombar(
+          currentIndex: _selectedIndex,
+          valueChanged: _onItemTapped,
+          navigationItems: iconList,
+          selectedIconColor: Appdata.selectedItemColor,
+          selectedLabelColor: Appdata.selectedItemColor,
+          unselectedIconSize: Appdata.sizeIcons,
+          selectedIconSize: Appdata.sizeSelectedIcons,
+          unselectedLabelSize: Appdata.sizeLabels,
+          selectedLabelSize: Appdata.sizeLabels,
+          backgroundColor: Appdata.barColor,
+          indicatorColor: Appdata.indicatorColor,
+        ),
       ),
     );
   }

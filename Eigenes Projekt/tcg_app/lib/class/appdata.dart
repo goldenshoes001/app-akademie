@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 
 class Appdata {
-  int fontSizeBody = 14;
-  static final int colorIndexBarColorRed = 80;
-  static final int colorIndexBarColorYellow = 80;
-  static final int colorIndexBarColorBlue = 80;
+  static final int r = 120;
+  static final int y = 195;
+  static final int b = 248;
+  static final int fontSizeBody = 14;
+  static final int colorIndexDifference = 30;
+  static final _colorBrightnessFaktor = 0.3;
+  static final int colorIndexBarColorRed = (r * _colorBrightnessFaktor).round();
+  static final int colorIndexBarColorYellow = (y * _colorBrightnessFaktor)
+      .round();
+  static final int colorIndexBarColorBlue = (b * _colorBrightnessFaktor)
+      .round();
 
   static final int colorindexBodyColorRed =
       colorIndexBarColorRed - colorIndexDifference;
@@ -19,8 +26,6 @@ class Appdata {
       colorIndexBarColorYellow + colorIndexDifference;
   static final int colorIndexIndicatorColorBlue =
       colorIndexBarColorBlue + colorIndexDifference;
-
-  static final int colorIndexDifference = 50;
 
   static final Color textColor = Colors.white;
   static final Color barColor = Color.fromRGBO(
@@ -44,7 +49,7 @@ class Appdata {
     colorIndexIndicatorColorBlue,
     1,
   );
-  static final double sizeIcons = 5;
+  static final double sizeIcons = 25;
   static final double appbarSize = 0;
   static final double header = 30;
   static final double textSize = 20;
@@ -52,4 +57,7 @@ class Appdata {
   static final FontWeight bold = FontWeight.bold;
   static final double differenceBetweenImageText = 80;
   static final String fontFamily = "arial";
+  static final int sizeDifference = 5;
+  static final double sizeSelectedIcons = sizeIcons + sizeDifference;
+  static final double sizeSelectedLabel = sizeLabels + sizeDifference;
 }

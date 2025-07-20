@@ -2,17 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:tcg_app/class/appdata.dart';
 
 class Barwidget extends StatelessWidget implements PreferredSizeWidget {
-  const Barwidget({super.key});
+  final Color barColor;
+  final String title;
+  final int elevation;
+  final Color shadow;
+  final Color surfaceTintColor;
+  const Barwidget({
+    super.key,
+    this.barColor = Colors.black,
+    this.title = "",
+    this.elevation = 0,
+    this.shadow = Colors.transparent,
+    this.surfaceTintColor = Colors.transparent,
+  });
   @override
   Widget build(BuildContext context) {
-    final Color barColor = Appdata.barColor;
-
     return AppBar(
       backgroundColor: barColor,
-      title: Text(""),
+      title: Text(title),
       elevation: 0,
-      shadowColor: Colors.transparent,
-      surfaceTintColor: Colors.transparent,
+      shadowColor: shadow,
+      surfaceTintColor: surfaceTintColor,
     );
   }
 
